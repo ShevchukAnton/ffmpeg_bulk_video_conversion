@@ -17,13 +17,15 @@ $files = @()
 if ((Get-Item $source).PSIsContainer) {
     # It's a directory, so get all the video files in the directory and subfolders
     $files = Get-ChildItem -LiteralPath $source -Recurse -Include *.mp4, *.avi, *.mkv, *.mov
-} else {
+}
+else {
     # It's a file, check if it has a valid video extension
     $extension = [System.IO.Path]::GetExtension($source)
     Write-Host "found extension - $extension"
     if ($extension -in @(".mp4", ".avi", ".mkv", ".mov")) {
         $files += Get-Item -LiteralPath $source
-    } else {
+    }
+    else {
         Write-Error "The provided file is not a valid video format: $source"
         exit
     }
@@ -52,11 +54,12 @@ foreach ($file in $files) {
     $output = Join-Path -Path $file.DirectoryName -ChildPath "$name"
 
     # Define the argument list for ffmpeg
-    $ArgumentList = "-i", "`"$userInput`"", "-map", "0", "-c:v", "libx265", "-crf", "21", "-preset", "fast", "-vtag", "hvc1", "-c:a", "copy", "-c:s", "copy", "-map_metadata", "0", "`"$output`""
+    $ArgumentList = "-i", "`"$userInput`"", "-map", "0", "-vf", "scale=trunc(iw/2)*2:trunc(ih/2)*2", "-c:v", "libx265", "-crf", "21", "-preset", "fast", "-vtag", "hvc1", "-c:a", "aac", "-b:a", "128k", "-c:s", "copy", "-map_metadata", "0", "`"$output`""
 
     # Try to start ffmpeg process using the specified path and argument list
     try {
-        Start-Process -FilePath D:\DOWNLOADS\ffmpeg-6.0-full_build\bin\ffmpeg.exe -ArgumentList $ArgumentList -Wait -NoNewWindow
+        Write-Host "Executing: 'Start-Process -FilePath D:\DOWNLOADS\ffmpeg-7.1-full_build\bin\ffmpeg.exe -ArgumentList $ArgumentList -Wait -NoNewWindow'" -ForegroundColor Cyan
+        Start-Process -FilePath D:\DOWNLOADS\ffmpeg-7.1-full_build\bin\ffmpeg.exe -ArgumentList $ArgumentList -Wait -NoNewWindow
     }
     catch {
         # Catch any exception that occurs and write an error message
