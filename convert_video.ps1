@@ -26,16 +26,16 @@ else {
         $files += Get-Item -LiteralPath $source
     }
     else {
-        Write-Error "The provided file is not a valid video format: $source"
+        Write-Error "❌ The provided file is not a valid video format: $source" -ForegroundColor Red
         exit
     }
 }
 
-Write-Host "found files - $files"
+Write-Host "✅ found files - $files" -ForegroundColor Green
 
 # Check if any files were found
 if ($files.Count -eq 0) {
-    Write-Error "No video files found to process."
+    Write-Error "❌ No video files found to process." -ForegroundColor Red
     exit
 }
 
@@ -63,7 +63,8 @@ foreach ($file in $files) {
     }
     catch {
         # Catch any exception that occurs and write an error message
-        Write-Error "Failed to convert $file" -ForegroundColor Yellow
+        Write-Error "⚠️ Failed to convert $file" -ForegroundColor Red
     }
 }
 
+Write-Host "✅ Conversion completed successfully!" -ForegroundColor Green
