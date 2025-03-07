@@ -12,6 +12,7 @@ if (-Not (Test-Path -LiteralPath $source)) {
 
 # Initialize an array to hold the files to process
 $files = @()
+$failedFiles = @()  # List to track failed files
 
 # Check if the source is a directory or a file
 if ((Get-Item $source).PSIsContainer) {
@@ -31,7 +32,10 @@ else {
     }
 }
 
-Write-Host "✅ found files - $files" -ForegroundColor Green
+Write-Host "Found files:" -ForegroundColor Green
+foreach ($f in $files) {
+    Write-Host " - $f" -ForegroundColor Green
+}
 
 # Check if any files were found
 if ($files.Count -eq 0) {
@@ -54,7 +58,20 @@ foreach ($file in $files) {
     $output = Join-Path -Path $file.DirectoryName -ChildPath "$name"
 
     # Define the argument list for ffmpeg
-    $ArgumentList = "-i", "`"$userInput`"", "-map", "0", "-vf", "scale=trunc(iw/2)*2:trunc(ih/2)*2", "-c:v", "libx265", "-crf", "21", "-preset", "fast", "-vtag", "hvc1", "-c:a", "aac", "-b:a", "128k", "-c:s", "copy", "-map_metadata", "0", "`"$output`""
+    $ArgumentList = @(
+        "-loglevel", "warning",
+        "-i", "`"$userInput`"",
+        "-map", "0",
+        "-vf", "scale=trunc(iw/2)*2:trunc(ih/2)*2",
+        "-c:v", "libx265",
+        "-crf", "21",
+        "-preset", "fast",
+        "-vtag", "hvc1",
+        "-c:a", "aac",
+        "-b:a", "128k",
+        "-c:s", "copy",
+        "-map_metadata", "0",
+        "`"$output`"")
 
     # Try to start ffmpeg process using the specified path and argument list
     try {
@@ -64,7 +81,16 @@ foreach ($file in $files) {
     catch {
         # Catch any exception that occurs and write an error message
         Write-Error "Failed to convert $file" -ForegroundColor Red
+        $failedFiles += $userInput  # Add failed file to list
     }
 }
 
 Write-Host "Conversion completed successfully!" -ForegroundColor Green
+
+# Print failed files if there are any
+if ($failedFiles.Count -gt 0) {
+    Write-Host "`nFailed Files:`n" -ForegroundColor Red
+    foreach ($failedFile in $failedFiles) {
+        Write-Host " - $failedFile" -ForegroundColor Red
+    }
+}
