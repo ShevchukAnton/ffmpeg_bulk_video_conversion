@@ -80,8 +80,8 @@ foreach ($file in $files) {
     }
     catch {
         # Catch any exception that occurs and write an error message
-        Write-Error "Failed to convert $file" -ForegroundColor Red
         $failedFiles += $userInput  # Add failed file to list
+        Write-Error "Failed to convert $file" -ForegroundColor Red
     }
 }
 
