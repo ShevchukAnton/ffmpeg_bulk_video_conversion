@@ -85,7 +85,7 @@ foreach ($file in $files) {
     }
 }
 
-Write-Host "Conversion completed successfully!" -ForegroundColor Green
+Write-Host "Conversion $source completed successfully!" -ForegroundColor Green
 
 # Print failed files if there are any
 if ($failedFiles.Count -gt 0) {
