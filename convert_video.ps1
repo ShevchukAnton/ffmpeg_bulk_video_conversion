@@ -49,13 +49,20 @@ foreach ($file in $files) {
     $userInput = $file.FullName
 
     # Get the name of the source file without extension
-    $name = $file.Name
+    $baseName = [System.IO.Path]::GetFileNameWithoutExtension($file.Name)
+    $extension = $file.Extension
 
-    # Replace any spaces in the name with _
-    $name = $name -replace " ", "_"
+    # If filename contains spaces, replace them; if not, append "__"
+    if ($baseName -match "\s") {
+        $newName = $baseName -replace " ", "_"
+    }
+    else {
+        $newName = "${baseName}__"
+    }
 
-    # Get the full path of the destination file with _h265 suffix and the same extension
-    $output = Join-Path -Path $file.DirectoryName -ChildPath "$name"
+    # Rebuild full output filename
+    $output = Join-Path -Path $file.DirectoryName -ChildPath "$newName$extension"
+
 
     # Define the argument list for ffmpeg
     $ArgumentList = @(
