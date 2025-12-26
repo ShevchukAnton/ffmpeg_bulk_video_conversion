@@ -83,7 +83,7 @@ foreach ($file in $files) {
     # Try to start ffmpeg process using the specified path and argument list
     try {
         Write-Host "Executing: 'Start-Process -FilePath .\ffmpeg-7.1-full_build\bin\ffmpeg.exe -ArgumentList $ArgumentList -Wait -NoNewWindow'" -ForegroundColor Cyan
-        Start-Process -FilePath D:\DOWNLOADS\ffmpeg-7.1-full_build\bin\ffmpeg.exe -ArgumentList $ArgumentList -Wait -NoNewWindow
+        Start-Process -FilePath .\ffmpeg-7.1-full_build\bin\ffmpeg.exe -ArgumentList $ArgumentList -Wait -NoNewWindow
     }
     catch {
         # Catch any exception that occurs and write an error message
