@@ -62,12 +62,13 @@ foreach ($file in $files) {
 
     # Rebuild full output filename
     $output = Join-Path -Path $file.DirectoryName -ChildPath "$newName$extension"
+    $ffmpeg = ".\ffmpeg-7.1-full_build\bin\ffmpeg.exe"
 
 
     # Define the argument list for ffmpeg
     $ArgumentList = @(
         "-loglevel", "warning",
-        "-i", "`"$userInput`"",
+        "-i", "$userInput",
         "-map", "0",
         "-vf", "scale=trunc(iw/2)*2:trunc(ih/2)*2",
         "-c:v", "libx265",
@@ -78,12 +79,15 @@ foreach ($file in $files) {
         "-b:a", "256k",
         "-c:s", "copy",
         "-map_metadata", "0",
-        "`"$output`"")
+        "-stats_period", "90",
+        "-progress", "pipe:1",
+        "-nostats",
+        "$output")
 
     # Try to start ffmpeg process using the specified path and argument list
     try {
-        Write-Host "Executing: 'Start-Process -FilePath .\ffmpeg-7.1-full_build\bin\ffmpeg.exe -ArgumentList $ArgumentList -Wait -NoNewWindow'" -ForegroundColor Cyan
-        Start-Process -FilePath .\ffmpeg-7.1-full_build\bin\ffmpeg.exe -ArgumentList $ArgumentList -Wait -NoNewWindow
+        Write-Host "Executing: '& $ffmpeg $ArgumentList" -ForegroundColor Cyan
+        & $ffmpeg @ArgumentList
     }
     catch {
         # Catch any exception that occurs and write an error message
