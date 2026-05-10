@@ -72,10 +72,10 @@ foreach ($file in $files) {
         "-vf", "scale=trunc(iw/2)*2:trunc(ih/2)*2",
         "-c:v", "libx265",
         "-crf", "21",
-        "-preset", "fast",
+        "-preset", "medium",
         "-vtag", "hvc1",
         "-c:a", "aac",
-        "-b:a", "128k",
+        "-b:a", "256k",
         "-c:s", "copy",
         "-map_metadata", "0",
         "`"$output`"")
